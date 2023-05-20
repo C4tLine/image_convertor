@@ -1,7 +1,4 @@
 #!/bin/bash
-# Скрипт должен конвертировать формат картинок в указанной папке
-# ./art.sh file1
-
 
 if [[ ! -n $1 ]]; then 
     echo "Wrong argument!"
@@ -9,20 +6,33 @@ if [[ ! -n $1 ]]; then
     exit 1
 fi
 
-folder1=$1
-
 count=0
+echo "1. png > jpg"
+echo "2. jpg > png"
+read -p "Choose number to convert: " format
+
+if [[ $format -lt 1 ]] || [[ $format -gt 2 ]]; then
+    echo "Wrong number!"
+    exit 0
+fi
+
+if [[ $format == 2 ]]; then
+    form="jpg"
+    morf="png"
+else
+    form="png"
+    morf="jpg"
+fi
 for file in $(ls $1)
 do 
     image="$1/$file"
-    if [[ $image == *.png ]]
-    then
+    if [[ $image == *.$form ]]; then
         echo "Convert $image"
-        convert "$image" "${image%.png}.jpg"
+        convert "$image" "${image%.$form}.$morf"
+        count=$(($count+1))
     else
-        echo "File $image is not image, skip"
+        echo "File $image is not $form, skip"
     fi
-    count=$(($count+1))
 done
 
 echo "All $count images have been converted!"
